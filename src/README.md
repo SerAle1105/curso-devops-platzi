@@ -16,8 +16,22 @@ según las categorías de la OMS, con su suite de pruebas.
 dotnet restore
 dotnet build --configuration Release
 dotnet test --configuration Release
-dotnet run --project BmiApi        # Swagger en https://localhost:<puerto>/swagger
+dotnet run --project BmiApi        # Swagger UI en http://localhost:5290/
 ```
+
+## Swagger / OpenAPI
+
+La documentación interactiva se sirve en la **raíz** de la aplicación (`/`) en todos los
+entornos, y el contrato en `/swagger/v1/swagger.json`.
+
+| Recurso | URL local |
+| --- | --- |
+| Swagger UI | <http://localhost:5290/> |
+| Contrato OpenAPI | <http://localhost:5290/swagger/v1/swagger.json> |
+
+El contrato se genera a partir de los comentarios `///` del código (`GenerateDocumentationFile`),
+así que las descripciones y los ejemplos de Swagger salen del propio código fuente.
+Hay una copia versionada del contrato en [docs/swagger.json](../docs/swagger.json).
 
 ## Endpoints
 
