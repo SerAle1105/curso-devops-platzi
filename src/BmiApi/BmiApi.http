@@ -1,0 +1,23 @@
+@BmiApi_HostAddress = http://localhost:5290
+
+### Calcular el IMC enviando el cuerpo en JSON
+POST {{BmiApi_HostAddress}}/api/bmi
+Content-Type: application/json
+
+{
+  "weightKg": 70,
+  "heightM": 1.75
+}
+
+### Calcular el IMC por query string
+GET {{BmiApi_HostAddress}}/api/bmi?weightKg=70&heightM=1.75
+Accept: application/json
+
+### Datos fuera de rango: devuelve 400
+POST {{BmiApi_HostAddress}}/api/bmi
+Content-Type: application/json
+
+{
+  "weightKg": 0,
+  "heightM": 1.75
+}

@@ -1,0 +1,13 @@
+# Build de .NET
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+TestResults/
+*.user
+*.trx
+
+# Herramientas
+.vs/
+.vscode/
+.idea/
