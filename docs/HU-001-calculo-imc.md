@@ -94,9 +94,11 @@ Entonces recibo un 400 Bad Request
 ### CA-7 — Documentación interactiva
 
 ```gherkin
-Dado que ejecuto la API en el entorno de Desarrollo
-Cuando abro /swagger
-Entonces veo ambos endpoints documentados con sus modelos y códigos de respuesta
+Dado que ejecuto la API en cualquier entorno
+Cuando abro la raíz de la aplicación
+Entonces veo la Swagger UI con ambos endpoints documentados
+  Y el contrato está disponible en /swagger/v1/swagger.json
+  Y las descripciones y ejemplos provienen de los comentarios /// del código
 ```
 
 ## Solución implementada
@@ -111,28 +113,30 @@ de CI (`working-directory: src`).
 | Dominio | [BmiCalculator.cs](../src/BmiApi/Services/BmiCalculator.cs) | Fórmula, redondeo y tabla de la OMS. Sin dependencias de ASP.NET. |
 | Contrato | [IBmiCalculator.cs](../src/BmiApi/Services/IBmiCalculator.cs) | Abstracción registrada en el contenedor de DI. |
 | Exposición | [BmiController.cs](../src/BmiApi/Controllers/BmiController.cs) | Endpoints `POST` y `GET`, validación y códigos de respuesta. |
-| Arranque | [Program.cs](../src/BmiApi/Program.cs) | Controllers, Swagger y registro de `IBmiCalculator`. |
+| Arranque | [Program.cs](../src/BmiApi/Program.cs) | Controllers, registro de `IBmiCalculator` y configuración de Swagger. |
+| Contrato | [docs/swagger.json](swagger.json) | Copia versionada del OpenAPI generado por la API. |
 
 El cálculo vive en una clase de dominio sin dependencias del framework, de modo que se puede
 probar en aislamiento y reutilizar desde otro tipo de host si más adelante hace falta.
 
 ## Pruebas
 
-40 casos, todos en verde con `dotnet test --configuration Release`.
+45 casos, todos en verde con `dotnet test --configuration Release`.
 
 | Suite | Archivo | Qué cubre |
 | --- | --- | --- |
 | Unitarias | [BmiCalculatorTests.cs](../src/BmiApi.Tests/BmiCalculatorTests.cs) | Fórmula y redondeo (CA-1, CA-3), cada límite de las seis categorías incluyendo 18.49/18.5, 24.99/25, 29.99/30, 34.99/35, 39.99/40 (CA-4), y entradas inválidas: cero, negativos, `NaN` e infinito. |
 | Integración | [BmiControllerTests.cs](../src/BmiApi.Tests/BmiControllerTests.cs) | API levantada en memoria con `WebApplicationFactory`: respuestas 200 de ambos endpoints (CA-1, CA-2), 400 por rango (CA-5) y 400 por cuerpo vacío (CA-6). |
+| Contrato | [SwaggerTests.cs](../src/BmiApi.Tests/SwaggerTests.cs) | El `swagger.json` se genera, describe el `GET` y el `POST`, expone título y versión, incluye descripciones y ejemplos en los esquemas, y la UI responde en la raíz (CA-7). |
 
 ## Definición de terminado
 
 - [x] La solución compila en Release sin advertencias.
-- [x] Las 40 pruebas pasan.
-- [x] Los criterios CA-1 a CA-6 están cubiertos por pruebas automatizadas.
+- [x] Las 45 pruebas pasan.
+- [x] Los criterios CA-1 a CA-7 están cubiertos por pruebas automatizadas.
 - [x] La API está documentada en Swagger y en [src/README.md](../src/README.md).
 - [x] `bin/` y `obj/` quedan fuera del control de versiones vía `.gitignore`.
-- [ ] CA-7 verificado manualmente en un navegador.
+- [x] El contrato OpenAPI está versionado en [docs/swagger.json](swagger.json).
 
 ## Pendientes / notas
 
