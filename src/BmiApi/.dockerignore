@@ -1,0 +1,7 @@
+# Nunca copiar binarios del host dentro de la imagen:
+# se compilan adentro y, si se mezclan, el contenedor puede fallar al arrancar.
+bin/
+obj/
+
+Dockerfile
+.dockerignore
