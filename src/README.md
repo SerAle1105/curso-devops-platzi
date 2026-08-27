@@ -57,6 +57,32 @@ Ambos devuelven:
 Los datos fuera de rango (peso 1–500 kg, estatura 0.5–2.5 m) devuelven `400 Bad Request`
 con un `ValidationProblemDetails`.
 
+## Docker
+
+El [Dockerfile](BmiApi/Dockerfile) usa **build multi-etapa**: compila con la imagen del SDK y
+publica el resultado sobre la imagen de runtime, que es mucho más liviana.
+
+```bash
+# Desde la raíz del repositorio (el contexto es la carpeta del proyecto)
+docker build -t sgarcia/bmiapi src/BmiApi
+
+docker run -it --rm --name bmiapi -p 8080:8080 sgarcia/bmiapi
+```
+
+Con el contenedor arriba:
+
+| Recurso | URL |
+| --- | --- |
+| Swagger UI | <http://localhost:8080/> |
+| Cálculo del IMC | <http://localhost:8080/api/bmi?weightKg=70&heightM=1.75> |
+
+Notas:
+
+- Las imágenes de .NET 8 escuchan en el **puerto 8080** (en .NET 6/7 era el 80).
+- El [.dockerignore](BmiApi/.dockerignore) impide copiar `bin/` y `obj/` del equipo dentro
+  de la imagen; mezclar binarios del host con los del contenedor rompe el arranque.
+- Para cambiar el puerto interno: `docker run -e ASPNETCORE_HTTP_PORTS=5000 -p 8080:5000 ...`
+
 ## Clasificación (OMS)
 
 | IMC | Categoría |
